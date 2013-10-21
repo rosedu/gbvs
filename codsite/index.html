@@ -1,0 +1,157 @@
+<html>
+<head>
+  <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6/leaflet.css" />
+  <link rel="stylesheet" href="dialog.css" />
+
+  <link rel="stylesheet" href="master.css" />
+  <link rel="stylesheet" href="master.css" />
+  <link href='http://api.tiles.mapbox.com/mapbox.js/v1.3.1/mapbox.standalone.css' rel='stylesheet' />
+  <!--[if lte IE 8]>
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6/leaflet.ie.css" />
+  <![endif]-->
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+  <script src="http://cdn.leafletjs.com/leaflet-0.6/leaflet.js"></script>
+  <script src='http://api.tiles.mapbox.com/mapbox.js/v1.3.1/mapbox.standalone.js'></script>
+   <title>Bike Map</title>
+  <style>
+ </style>
+</head>
+<body>
+  <div id='npoint'>Punct nou</div>
+  <div id='map'></div>
+  <script type='text/javascript'>
+//A nu se baga in seama
+function delete_dialog()
+{
+        $('#dialog').remove();
+
+                //$('#dialog').remove();
+
+
+}
+
+
+function trimite(lat, lon) {
+	var nume = 0; var tel = 0; var email = 0;var grup=0;var descriere = 0;
+$(document.body).append('<div id="dialog"><div id="dialog-overlay"></div><div id="dialog-box"><div class="dialog-content"><div id="dialog-message"></div><a id = "inchide" class="button">Trimite</a><a onclick = "delete_dialog()" class="button">Inchide</a></div></div></div>')
+// get the screen height and width  
+var maskHeight = $(document).height();  
+var maskWidth = $(window).width();
+
+// calculate the values for center alignment
+var dialogTop =  (maskHeight/3) - ($('#dialog-box').height());  
+var dialogLeft = (maskWidth/2) - ($('#dialog-box').width()/2); 
+
+// assign values to the overlay and dialog box
+$('#dialog-overlay').css({height:maskHeight, width:maskWidth});
+$('#dialog-box').css({top:dialogTop, left:dialogLeft});
+$('#dialog').fadeIn();
+
+// display the message
+$('#dialog-message').append('<form name = "date" method = "post" action = "" ><span>Nume : &nbsp;&nbsp;&nbsp;</span><input type="text" name = "nume" /><br /><span>Grup : </span><input type="text" name = "grup" /><br /><span>Email :&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><input type="text" name = "email" /><br /><span>Telefon : </span><input type="text" name = "telefon" /><br /><span>Descriere :&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><input type="text" name = "descriere" /><br /><span>Biciclete :&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><input type="text" name = "bike" /><br /><br /></form>');
+	$('#inchide').click(function  () {
+  {
+	nume = $("input[name=nume]").val();
+	email = $("input[name=email]").val();
+        grup = $("input[name=grup]").val();			
+	telefon = $("input[name=telefon]").val();
+	descriere = $("input[name=descriere]").val();
+	bike = $("input[name=bike]").val();
+	$('#dialog-message').html('Loading...');
+	$('.button').remove();
+        $.get("http://site.valexandru.biz/json/addpoint.php",{lat:lat,lon:lon,name : nume, email : email, group : grup, phone : telefon, description: descriere,bikes:bike})
+
+														.done(function() {
+																	   
+																	 
+													delete_dialog();
+													//window.reload();			
+													location.reload();
+																		})
+														.fail(function() { return 0; })
+							}
+
+	});
+}
+//-------------------------
+
+
+ function addBike(name)
+  {
+    $.get( "http://site.valexandru.biz/json/addbikes.php",{"name" : name, "bikes" : 1},  function( data ) {
+
+   
+
+      var x = $('#nrP').html() 
+      $('#nrP').html(x*1+1);
+	});
+ return 0;  
+}
+function removeBike(name) {    
+   $.get( "http://site.valexandru.biz/json/addbikes.php",{"name" : name, "bikes" : -1}, function( data ) {
+   
+
+      var x = $('#nrP').html() 
+      $('#nrP').html(x*1-1);
+	});
+ return 0;  
+}
+function delpoint(name) {
+  $.get("http://site.valexandru.biz/json/delpoint.php", {"name" : name}, function(data) { location.reload() });
+  
+}
+function addpoint(lat,lon)
+{
+ popup(lon + lat);
+ 
+}
+ document.getElementById("map").style.width = screen.availWidth +5 + 'px';
+ document.getElementById("map").style.height = screen.availHeight+5 + 'px';
+ document.domain = "valexandru.biz";   
+  navigator.geolocation.getCurrentPosition(function (position) {
+  //console.log("wtf");
+  $.getJSON( "http://site.valexandru.biz/json/points.php?lat="+position.coords.latitude+"&lon="+position.coords.longitude+"&distance=100", function( data ) {
+  var items = [];
+//  console.log(data)
+  var geoJson = [];
+  $.each( data, function( key, val ) {
+  
+   geoJson.push({
+    type: 'Feature',
+    "geometry": { "type": "Point", "coordinates": [val.lon, val.lat]},
+    "properties":{"total" : val.bikes, "name": val.name, "description": val.description, "group": val.group }
+ })
+ 
+   })
+ var map = L.mapbox.map('map', 'vladbadelita.map-nzzoin33');
+   // Add features to the map
+    map.markerLayer.setGeoJSON(geoJson);
+    // Cycle through markers once geoJson is ready.
+   // Add custom popups to each using our custom feature properties
+  $('#npoint').click(function () {
+   $('#map').addClass('op');
+   map.on('click', function (e) {
+	
+	$('#map').removeClass('op');	
+        var lat = e.latlng.lat;
+        var lon = e.latlng.lng;
+        trimite(lat,lon);
+	});});
+       
+   map.markerLayer.eachLayer(function(marker) {
+   var feature = marker.feature;
+   // Create custom popup content
+  
+   var popupContent = '<a style="float: right;" onclick="delpoint(\''+ feature.properties.name +'\')"  >Sterge punctul </a> <table border=1>'+'<tr><th>Biciclete</th></tr><tr><td id="nrP">'+ feature.properties.total +'</td></tr></table>'+'<a class="addBike" onclick="addBike(\''+ feature.properties.name+'\')">Adauga o bicleta</a>'+'<br /><a class="removeBike" onclick="removeBike(\''+ feature.properties.name+'\')">Sterge  o bicleta</a>'+'<p>'+ feature.properties.description +'</p>'+'<h2>'+feature.properties.name+'</h2>'+'<h2 style="color:#666">'+feature.properties.group+'</h2>';
+   // http://leafletjs.com/reference.html#popup
+   marker.bindPopup(popupContent,{
+   closeButton: true,
+   minWidth: 300
+  });
+  });
+  map.setView([position.coords.latitude, position.coords.longitude], 16);
+  });
+  }); 
+  </script>
+</body>
+</html>

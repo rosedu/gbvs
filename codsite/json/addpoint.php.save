@@ -1,0 +1,15 @@
+<?php
+require 'clasamysql.php';
+        $m = new loginmysql();
+        $m->start_con();
+        $m->select_datab();
+        $string1=str_replace("%20"," ",$_GET['name']);
+	$string2=str_replace("%20"," ",$_GET['group']);
+	$string3=str_replace("%20"," ",$_GET['description']);
+        $m->add_bikes($_GET['lat'],$_GET['lon'],$string1,$_GET['bikes'],$string2,$string3);
+	$entityBody = stream_get_contents(STDIN);
+?>
+
+
+
+
