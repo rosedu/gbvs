@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent" >
+
+  <ImageView
+	  android:id="@+id/photo"
+	  android:layout_width="fill_parent"
+	  android:layout_height="wrap_content" />
+
+  <TextView
+	  android:id="@+id/bikes"
+	  android:textAppearance="?android:attr/textAppearanceLarge"
+	  android:textStyle="bold"
+	  android:layout_width="fill_parent"
+	  android:layout_height="wrap_content" />
+
+  <TextView
+	  android:id="@+id/description"
+	  android:textAppearance="?android:attr/textAppearanceLarge"
+	  android:singleLine="false"
+	  android:layout_width="fill_parent"
+	  android:layout_height="wrap_content" />
+
+  <Button
+	  android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:onClick="dial"
+	  android:text="Call"
+	  android:id="@+id/dialButton"
+	  android:drawableLeft="@android:drawable/ic_menu_call" />
+
+  <Button
+	  android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:onClick="email"
+	  android:text="Send email"
+	  android:id="@+id/emailButton" />
+
+  <View
+	  android:layout_width="fill_parent"
+	  android:layout_height="1dp"
+	  android:background="@android:color/darker_gray" />
+
+  <Button
+	  android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:onClick="addBike"
+	  android:text="Add a bike" />
+
+  <Button
+	  android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:onClick="removeBike"
+	  android:text="Remove a bike" />
+</LinearLayout>
+
